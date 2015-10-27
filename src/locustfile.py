@@ -7,6 +7,9 @@ class ZeroMqClient(object):
 
     def __init__(self, address):
         self.socket = ZeroMqClient.context.socket(zmq.REQ)
+        if self.socket is None:
+            raise Exception("Ran out of sockets!")
+
         self.socket.connect("tcp://{address}".format(address=address))
 
     def __del__(self):
