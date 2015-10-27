@@ -3,38 +3,39 @@ import zmq
 
 
 class ZeroMqClient(object):
-    def __init__(self, address, **kwargs):
-        print("Received address: {address}".format(address=address))
-        self.address = address
-        self.setup()
+    context = zmq.Context()
 
-    def setup(self):
-        self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.REQ)
-        self.socket.connect("tcp://{address}".format(address=self.address))
+    def __init__(self, address):
+        self.socket = ZeroMqClient.context.socket(zmq.REQ)
+        self.socket.connect("tcp://{address}".format(address=address))
+
+    def __del__(self):
+        self.socket.close()
 
     def ping(self):
         self.socket.send(b"Hello")
-        message = self.socket.recv(copy=False)
+        self.socket.recv(copy=False)
         events.request_success.fire(
             request_type="zeromq",
             name="ping",
             response_time=100,
-            response_length=0
+            response_length=5
         )
-        print("Received reply [ {message} ]".format(message=message))
 
 
-class MobileAppUser(Locust):
-    address = "tcp://127.0.0.1:5555"
-    min_wait = 325
-    max_wait = 750
-
-    def __init__(self, *args, **kwargs):
-        super(Locust, self).__init__(*args, **kwargs)
+class ZeroMqLocust(Locust):
+    def __init__(self):
+        super(ZeroMqLocust, self).__init__()
         self.client = ZeroMqClient(self.host)
 
-    class UserBehavior(TaskSet):
-        @task(1)
-        def ping(self):
-            self.client.ping()
+
+class UserBehavior(TaskSet):
+    @task(1)
+    def ping(self):
+        self.client.ping()
+
+
+class MobileAppUser(ZeroMqLocust):
+    task_set = UserBehavior
+    min_wait = 325
+    max_wait = 750
