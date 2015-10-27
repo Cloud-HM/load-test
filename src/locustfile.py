@@ -17,6 +17,9 @@ class ZeroMqClient(object):
             self.socket.close()
 
     def ping(self):
+        if self.socket is None:
+            return
+
         self.socket.send(b"Hello")
         self.socket.recv(copy=False)
         events.request_success.fire(
