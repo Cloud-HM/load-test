@@ -44,5 +44,5 @@ class UserBehavior(TaskSet):
 
 class MobileAppUser(ZeroMqLocust):
     task_set = UserBehavior
-    min_wait = 325
-    max_wait = 750
+    min_wait = 10
+    max_wait = 50
