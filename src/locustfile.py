@@ -10,7 +10,8 @@ class ZeroMqClient(object):
         self.socket.connect("tcp://{address}".format(address=address))
 
     def __del__(self):
-        self.socket.close()
+        if self.socket is not None:
+            self.socket.close()
 
     def ping(self):
         self.socket.send(b"Hello")
