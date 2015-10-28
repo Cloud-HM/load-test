@@ -1,0 +1,15 @@
+---
+- hosts: all
+  sudo: yes
+
+  tasks:
+    - name: Install dependencies (pyenv, git)
+      apt: name=build-essential
+      environment:
+        PATH:$HOME/.linuxbrew/bin:$PATH
+        MANPATH:$HOME/.linuxbrew/share/man:$MANPATH
+        INFOPATH:
+    - name: Configure dependencies (create virtualenv, set to python 2.7)
+    - name: Get source code
+    - name: pip install requirements
+    - name: Run locust
