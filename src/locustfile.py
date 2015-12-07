@@ -1,13 +1,15 @@
-from locust import TaskSet, Locust, events
 import zmq
+from locust import TaskSet, Locust, events, task
 
 
 class ZeroMqClient(object):
     context = zmq.Context()
 
-    def __init__(self, address):
+    def __init__(self, host):
+        # `host` parameter must be of format -> ex: tcp://127.0.0.1:5555
+        print "Host information %s" % host
         self.socket = ZeroMqClient.context.socket(zmq.REQ)
-        self.socket.connect("tcp://{address}".format(address=address))
+        self.socket.connect(host)
 
     def __del__(self):
         self.socket.close()
@@ -30,6 +32,7 @@ class ZeroMqLocust(Locust):
 
 
 class UserBehavior(TaskSet):
+    @task(10)
     def ping(self):
         self.client.ping()
 
