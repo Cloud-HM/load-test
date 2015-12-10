@@ -1,6 +1,8 @@
 import zmq
+import resource
 from locust import TaskSet, Locust, events, task
 
+resource.setrlimit(resource.RLIMIT_NOFILE, (3000, 3000))
 
 class ZeroMqClient(object):
     context = zmq.Context()
