@@ -34,12 +34,15 @@ class ZeroMqLocust(Locust):
 
 
 class UserBehavior(TaskSet):
-    @task(10)
+    def on_start(self):
+        self.client.ping()
+
+    @task
     def ping(self):
         self.client.ping()
 
 
 class MobileAppUser(ZeroMqLocust):
     task_set = UserBehavior
-    min_wait = 10
-    max_wait = 50
+    min_wait = 2
+    max_wait = 4
